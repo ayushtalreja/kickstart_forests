@@ -1,9 +1,8 @@
 import logging
-from typing import Tuple, Optional
+from typing import Optional
 from sklearn.manifold import TSNE
 from sensai import InputOutputData
 from sensai.util.string import ToStringMixin
-import numpy as np
 import pandas as pd
 from . import config
 
@@ -40,7 +39,7 @@ COL_SENTINEL_VALUES = [
 ]
 
 
-class Dataset:
+class Dataset(ToStringMixin):
     def __init__(
         self,
         num_samples: Optional[int] = None,
