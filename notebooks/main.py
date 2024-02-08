@@ -14,7 +14,7 @@ def main():
 
     models = (
         [
-            ModelFactory.create_logistic_regression_orig(),
+            ModelFactory.create_linear_regression_orig(),
             ModelFactory.create_random_forest_orig(),
         ]
         if not use_tsne

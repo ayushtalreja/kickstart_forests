@@ -12,7 +12,7 @@ class ModelFactory:
     COLS_USED_BY_ORIGINAL_MODELS = [COL_WETNESS, *COL_SENTINEL_VALUES]
 
     @classmethod
-    def create_logistic_regression_orig(cls):
+    def create_linear_regression_orig(cls):
         return Pipeline(
             [
                 (
