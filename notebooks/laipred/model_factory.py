@@ -1,49 +1,42 @@
-from sklearn import linear_model
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import Pipeline
-from sklearn.neural_network import MLPRegressor
-
-
 from.data import COL_WETNESS, COL_SENTINEL_VALUES
+from sensai.data_transformation import DFTSkLearnTransformer
+from sensai.featuregen import FeatureGeneratorTakeColumns
+from sensai.sklearn.sklearn_regression import SkLearnMultiLayerPerceptronVectorRegressionModel, \
+    SkLearnRandomForestVectorRegressionModel, SkLearnLinearSVRVectorRegressionModel
+
 
 class ModelFactory:
     COLS_USED_BY_ORIGINAL_MODELS = [COL_WETNESS, *COL_SENTINEL_VALUES]
 
     @classmethod
-    def create_linear_regression_orig(cls):
-        return Pipeline(
-            [
-                ("model", linear_model.LinearRegression()),
-            ]
-        )
+    def create_logistic_regression_orig(cls):
+        return SkLearnLinearSVRVectorRegressionModel(solver='lbfgs', max_iter=1000) \
+            .with_feature_generator(FeatureGeneratorTakeColumns(cls.COLS_USED_BY_ORIGINAL_MODELS)) \
+            .with_name("LogisticRegression-orig")
 
     @classmethod
     def create_random_forest_orig(cls):
-        return Pipeline(
-            [
-                ("model", RandomForestRegressor(n_estimators=100)),
-            ]
-        )
+        return SkLearnRandomForestVectorRegressionModel(n_estimators=100) \
+            .with_feature_generator(FeatureGeneratorTakeColumns(cls.COLS_USED_BY_ORIGINAL_MODELS)) \
+            .with_name("RandomForest-orig")
+    
 
     @classmethod
-    def pure_random_forest(cls):
-                return Pipeline(
-            [
-                ("model", RandomForestRegressor(n_estimators=100, max_depth=100, random_state=42)),
-            ]
-        )
-
+    def create_pure_random_forest(cls):
+        return SkLearnRandomForestVectorRegressionModel(n_estimators=100, max_depth=100, random_state=42) \
+            .with_feature_generator(FeatureGeneratorTakeColumns(cls.COLS_USED_BY_ORIGINAL_MODELS)) \
+            .with_name("RandomForest-v2")
 
     @classmethod
-    def pure_mlp(cls):
-        return Pipeline(
-            [
-                ("model",MLPRegressor(
+    def create_pure_mlp(cls):
+        return SkLearnMultiLayerPerceptronVectorRegressionModel(
             hidden_layer_sizes=(1000, 100, 10),
             max_iter=1000,
             random_state=42,
-            early_stopping=True,)),
-            ]
-        )
+            early_stopping=True,) \
+            .with_feature_generator(FeatureGeneratorTakeColumns(cls.COLS_USED_BY_ORIGINAL_MODELS)) \
+            .with_name("MLP")
+
+
 
 

@@ -1,9 +1,13 @@
+import logging
 from typing import Tuple, Optional
 from sklearn.manifold import TSNE
-
+from sensai import InputOutputData
+from sensai.util.string import ToStringMixin
 import numpy as np
 import pandas as pd
 from . import config
+
+log = logging.getLogger(__name__)
 
 # Target Column
 COL_LEAF_AREA_INDEX = "lai"
@@ -60,10 +64,13 @@ class Dataset:
         :return: the full data frame for this dataset (including the class column)
         """
 
+        csv_path = config.csv_data_path()
+        log.info(f"Loading {self} from {csv_path}")
+        
         if self.drop_na:
-            df = pd.read_csv(config.csv_data_path(), index_col=0).dropna()
+            df = pd.read_csv(csv_path, index_col=0).dropna()
         else:
-            df = pd.read_csv(config.csv_data_path(), index_col=0)
+            df = pd.read_csv(csv_path, index_col=0)
 
         if self.drop_tree_species:
             df.drop("treeSpecies", axis=1, inplace=True)
@@ -73,37 +80,51 @@ class Dataset:
 
         column_names = list(df.columns)
         self.wavelength_columns = [x for x in column_names if x.startswith("w")][1:]
-        self.sentinel_columns = [x for x in column_names if x.startswith("Sentinel")]
         return df
 
-    def load_xy(self, use_tsne: bool = False) -> Tuple[pd.DataFrame, pd.Series]:
+    def load_io_data(self) -> InputOutputData:
         """
-        :return: a pair (X, y) where X is the data frame containing all attributes and y is the corresponding series of class values
+        :return: the I/O data
         """
-        df = self.load_data_frame()
-        if use_tsne:
-            tsne_model = TSNE(
-                n_components=3,
-                learning_rate="auto",
-                init="random",
-                perplexity=30,
-                random_state=0,
-            )
-            wavelength_feature_data = df.loc[:, self.wavelength_columns]
-            wavelength_embeddings = tsne_model.fit_transform(wavelength_feature_data)
+        return InputOutputData.from_data_frame(self.load_data_frame(), COL_LEAF_AREA_INDEX)
+    
 
-            sentinel_feature_data = df.loc[:, self.sentinel_columns]
-            tsne_model.set_params(n_components=3, perplexity=5)
-            sentinel_embeddings = tsne_model.fit_transform(sentinel_feature_data)
+    # Guowen remove your tsne from here and add it into model.py. This was part of step 3.
 
-            embeddings = np.concatenate(
-                (sentinel_embeddings, wavelength_embeddings), axis=1
-            )
+    # def load_xy(self, use_tsne: bool = False) -> Tuple[pd.DataFrame, pd.Series]:
+    #     """
+    #     :return: a pair (X, y) where X is the data frame containing all attributes and y is the corresponding series of class values
+    #     """
+    #     df = self.load_data_frame()
 
-            wetness_features = df.loc[:, COL_WETNESS].values
-            wetness_features = np.expand_dims(wetness_features, axis=1)
-            embeddings = np.concatenate((embeddings, wetness_features), axis=1)
-            return embeddings, df[COL_LEAF_AREA_INDEX].values
-        else:
-            return df.drop(columns=COL_LEAF_AREA_INDEX), df[COL_LEAF_AREA_INDEX]
+    #     #  
+    #     if use_tsne:
+    #         tsne_model = TSNE(
+    #             n_components=3,
+    #             learning_rate="auto",
+    #             init="random",
+    #             perplexity=30,
+    #             random_state=0,
+    #         )
+    #         wavelength_feature_data = df.loc[:, self.wavelength_columns]
+    #         wavelength_embeddings = tsne_model.fit_transform(wavelength_feature_data)
+
+    #         sentinel_feature_data = df.loc[:, COL_SENTINEL_VALUES]
+    #         tsne_model.set_params(n_components=3, perplexity=5)
+    #         sentinel_embeddings = tsne_model.fit_transform(sentinel_feature_data)
+
+    #         embeddings = np.concatenate(
+    #             (sentinel_embeddings, wavelength_embeddings), axis=1
+    #         )
+
+    #         wetness_features = df.loc[:, COL_WETNESS].values
+    #         wetness_features = np.expand_dims(wetness_features, axis=1)
+    #         embeddings = np.concatenate((embeddings, wetness_features), axis=1)
+    #         return embeddings, df[COL_LEAF_AREA_INDEX].values
+    #     else:
+    #         return df.drop(columns=COL_LEAF_AREA_INDEX), df[COL_LEAF_AREA_INDEX]
+        
+
+
+
 
