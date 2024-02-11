@@ -14,6 +14,8 @@ COL_LEAF_AREA_INDEX = "lai"
 # Input Features
 COL_WETNESS = "wetness"
 
+COL_TREE_SPECIES = "treeSpecies"
+
 COL_SENTINEL_2A_492 = "Sentinel_2A_492.4"
 COL_SENTINEL_2A_559 = "Sentinel_2A_559.8"
 COL_SENTINEL_2A_664 = "Sentinel_2A_664.6"
@@ -65,7 +67,7 @@ class Dataset(ToStringMixin):
 
         csv_path = config.csv_data_path()
         log.info(f"Loading {self} from {csv_path}")
-        
+
         if self.drop_na:
             df = pd.read_csv(csv_path, index_col=0).dropna()
         else:
@@ -85,8 +87,9 @@ class Dataset(ToStringMixin):
         """
         :return: the I/O data
         """
-        return InputOutputData.from_data_frame(self.load_data_frame(), COL_LEAF_AREA_INDEX)
-    
+        return InputOutputData.from_data_frame(
+            self.load_data_frame(), COL_LEAF_AREA_INDEX
+        )
 
     # Guowen remove your tsne from here and add it into model.py. This was part of step 3.
 
@@ -96,7 +99,7 @@ class Dataset(ToStringMixin):
     #     """
     #     df = self.load_data_frame()
 
-    #     #  
+    #     #
     #     if use_tsne:
     #         tsne_model = TSNE(
     #             n_components=3,
@@ -122,8 +125,3 @@ class Dataset(ToStringMixin):
     #         return embeddings, df[COL_LEAF_AREA_INDEX].values
     #     else:
     #         return df.drop(columns=COL_LEAF_AREA_INDEX), df[COL_LEAF_AREA_INDEX]
-        
-
-
-
-
