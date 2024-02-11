@@ -64,7 +64,7 @@ class ModelFactory:
         )
 
     @classmethod
-    def create_pure_random_forest_collector(cls):
+    def create_random_forest_collector(cls):
         fc = FeatureCollector(*cls.DEFAULT_FEATURES, registry=registry)
         return (
             SkLearnRandomForestVectorRegressionModel(
@@ -75,7 +75,7 @@ class ModelFactory:
         )
 
     @classmethod
-    def create_pure_mlp_collector(cls):
+    def create_mlp_collector(cls):
         fc = FeatureCollector(*cls.DEFAULT_FEATURES, registry=registry)
         return (
             SkLearnMultiLayerPerceptronVectorRegressionModel(
