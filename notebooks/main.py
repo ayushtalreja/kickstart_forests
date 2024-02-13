@@ -1,4 +1,4 @@
-from sensai.evaluation import RegressionModelEvaluation, RegressionEvaluatorParams
+from sensai.evaluation import RegressionModelEvaluation, RegressionEvaluatorParams, VectorModelCrossValidatorParams
 from sensai.util import logging
 from laipred.data import Dataset
 from laipred.model_factory import ModelFactory
@@ -7,6 +7,7 @@ from laipred.model_factory import ModelFactory
 def main():
     use_tsne = False
     test_registry = True
+    use_cross_validation = True
 
     dataset = Dataset()
     io_data = dataset.load_io_data()
@@ -32,10 +33,10 @@ def main():
     evaluator_params = RegressionEvaluatorParams(
         fractional_split_test_fraction=0.2, fractional_split_random_seed=42
     )
-
+    cross_validator_params = VectorModelCrossValidatorParams(folds=3)
     # use a high-level utility class for evaluating the models based on these parameters
-    ev = RegressionModelEvaluation(io_data, evaluator_params=evaluator_params)
-    ev.compare_models(models)
+    ev = RegressionModelEvaluation(io_data, evaluator_params=evaluator_params,cross_validator_params=cross_validator_params)
+    ev.compare_models(models,use_cross_validation=use_cross_validation)
 
 
 if __name__ == "__main__":
