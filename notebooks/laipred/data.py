@@ -40,6 +40,10 @@ COL_SENTINEL_VALUES = [
     COL_SENTINEL_2A_2202,
 ]
 
+COL_WAVELENGTH_LEVELS = []
+for i in range(400, 2501):
+    COL_WAVELENGTH_LEVELS.append("w" + str(i))
+
 
 class Dataset(ToStringMixin):
     def __init__(
@@ -90,38 +94,3 @@ class Dataset(ToStringMixin):
         return InputOutputData.from_data_frame(
             self.load_data_frame(), COL_LEAF_AREA_INDEX
         )
-
-    # Guowen remove your tsne from here and add it into model.py. This was part of step 3.
-
-    # def load_xy(self, use_tsne: bool = False) -> Tuple[pd.DataFrame, pd.Series]:
-    #     """
-    #     :return: a pair (X, y) where X is the data frame containing all attributes and y is the corresponding series of class values
-    #     """
-    #     df = self.load_data_frame()
-
-    #     #
-    #     if use_tsne:
-    #         tsne_model = TSNE(
-    #             n_components=3,
-    #             learning_rate="auto",
-    #             init="random",
-    #             perplexity=30,
-    #             random_state=0,
-    #         )
-    #         wavelength_feature_data = df.loc[:, self.wavelength_columns]
-    #         wavelength_embeddings = tsne_model.fit_transform(wavelength_feature_data)
-
-    #         sentinel_feature_data = df.loc[:, COL_SENTINEL_VALUES]
-    #         tsne_model.set_params(n_components=3, perplexity=5)
-    #         sentinel_embeddings = tsne_model.fit_transform(sentinel_feature_data)
-
-    #         embeddings = np.concatenate(
-    #             (sentinel_embeddings, wavelength_embeddings), axis=1
-    #         )
-
-    #         wetness_features = df.loc[:, COL_WETNESS].values
-    #         wetness_features = np.expand_dims(wetness_features, axis=1)
-    #         embeddings = np.concatenate((embeddings, wetness_features), axis=1)
-    #         return embeddings, df[COL_LEAF_AREA_INDEX].values
-    #     else:
-    #         return df.drop(columns=COL_LEAF_AREA_INDEX), df[COL_LEAF_AREA_INDEX]
