@@ -81,8 +81,14 @@ registry.register_factory(
         normalisation_rule_template=DFTNormalisation.RuleTemplate(
             transformer_factory=SkLearnTransformerFactoryFactory.StandardScaler(),
             # NOTE: Normalisation of multiple features must state whether columns are to be handled independently
-            #independent_columns=False,
+            independent_columns=False,
         ),
     ),
+)
+
+
+registry.register_factory(
+    FeatureName.TREE_SPECIES,
+    lambda: FeatureGeneratorTakeColumns()
 )
 

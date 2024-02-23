@@ -7,6 +7,7 @@ from sensai.sklearn.sklearn_regression import (
     SkLearnMultiLayerPerceptronVectorRegressionModel,
     SkLearnRandomForestVectorRegressionModel,
     SkLearnLinearSVRVectorRegressionModel,
+    SkLearnSVRVectorRegressionModel,
 )
 from .features import FeatureName, registry
 
@@ -91,4 +92,16 @@ class ModelFactory:
             #.with_feature_transformers(fc.create_feature_transformer_normalisation())
             #.with_target_transformer(DFTSkLearnTransformer(StandardScaler()))
             .with_name("MLP-collector")
+        )
+
+    @classmethod
+    def create_cvr(cls):
+        fc = FeatureCollector(*cls.DEFAULT_FEATURES, registry=registry)
+        return (SkLearnSVRVectorRegressionModel(
+                C=100, epsilon=0.001, kernel='rbf',
+            )
+            .with_feature_collector(fc)
+            .with_feature_transformers(fc.create_feature_transformer_normalisation())
+            .with_target_transformer(DFTSkLearnTransformer(StandardScaler()))
+            .with_name("SVR")
         )

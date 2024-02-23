@@ -22,6 +22,7 @@ def main():
         models = [
             ModelFactory.create_random_forest_collector(),
             ModelFactory.create_mlp_collector(),
+            ModelFactory.create_cvr()
         ]
     else:
         models = [

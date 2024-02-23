@@ -72,10 +72,9 @@ class Dataset(ToStringMixin):
         csv_path = config.csv_data_path()
         log.info(f"Loading {self} from {csv_path}")
 
+        df = pd.read_csv(csv_path, index_col=0).dropna()
         if self.drop_na:
-            df = pd.read_csv(csv_path, index_col=0).dropna()
-        else:
-            df = pd.read_csv(csv_path, index_col=0)
+            df = df.dropna()
 
         if self.drop_tree_species:
             df.drop("treeSpecies", axis=1, inplace=True)
