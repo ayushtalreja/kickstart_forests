@@ -29,7 +29,9 @@ registry.register_factory(
     lambda: FeatureGeneratorTakeColumns(
         COL_SENTINEL_VALUES,
         normalisation_rule_template=DFTNormalisation.RuleTemplate(
-            transformer_factory=SkLearnTransformerFactoryFactory.StandardScaler()
+            transformer_factory=SkLearnTransformerFactoryFactory.StandardScaler(),
+            # NOTE: Normalisation of multiple features must state whether columns are to be handled independently
+            #independent_columns=False,
         ),
     ),
 )
