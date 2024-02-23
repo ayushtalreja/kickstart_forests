@@ -1,5 +1,5 @@
 from enum import Enum
-from sklearn,manifold import TSNE
+from sklearn.manifold import TSNE
 
 from .data import *
 from sensai.data_transformation import (
@@ -85,3 +85,4 @@ registry.register_factory(
         ),
     ),
 )
+
