@@ -50,7 +50,7 @@ class Dataset(ToStringMixin):
         self,
         num_samples: Optional[int] = None,
         drop_na: bool = True,
-        drop_tree_species: bool = True,
+        drop_tree_species: bool = False,#True,
         random_seed: int = 42,
     ):
         """

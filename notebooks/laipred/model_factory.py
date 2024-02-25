@@ -18,6 +18,7 @@ class ModelFactory:
         FeatureName.WETNESS,
         FeatureName.SENTINEL_LEVELS,
     )
+    ALL_FEATURES = (FeatureName.WETNESS, FeatureName.SENTINEL_LEVELS,FeatureName.TREE_SPECIES)#, FeatureName.WAVELENGTH_LEVELS)
 
     @classmethod
     def create_logistic_regression_orig(cls):
@@ -96,12 +97,13 @@ class ModelFactory:
 
     @classmethod
     def create_cvr(cls):
-        fc = FeatureCollector(*cls.DEFAULT_FEATURES, registry=registry)
+        fc = FeatureCollector(*cls.ALL_FEATURES, registry=registry)
         return (SkLearnSVRVectorRegressionModel(
                 C=100, epsilon=0.001, kernel='rbf',
             )
             .with_feature_collector(fc)
-            .with_feature_transformers(fc.create_feature_transformer_normalisation())
+            .with_feature_transformers(fc.create_feature_transformer_normalisation(),
+            fc.create_feature_transformer_one_hot_encoder())
             .with_target_transformer(DFTSkLearnTransformer(StandardScaler()))
             .with_name("SVR")
         )

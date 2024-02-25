@@ -1,15 +1,19 @@
 from enum import Enum
 from sklearn.manifold import TSNE
+from sklearn.impute import SimpleImputer
 
 from .data import *
 from sensai.data_transformation import (
     DFTNormalisation,
     SkLearnTransformerFactoryFactory,
+    DFTSkLearnTransformer,
 )
 from sensai.featuregen import (
     FeatureGeneratorRegistry,
     FeatureGeneratorTakeColumns,
     FeatureGenerator,
+    ChainedFeatureGenerator,
+    FeatureGeneratorFromDFT,
 )
 
 
@@ -63,6 +67,15 @@ class FeatureGeneratorTSNE(FeatureGenerator):
 
         return pd.DataFrame({"wavelength_feature_data": wavelength_embeddings}, index=df.index)
 
+#class based on code fromjag team
+class FGImputer(FeatureGeneratorFromDFT):
+        def __init__(self, strategy="median"):
+            if strategy not in ["median","mean","most_frequent"]:
+                strategy = "median"
+            super().__init__(DFTSkLearnTransformer(SimpleImputer(strategy=strategy)),
+                         normalisation_rule_template=DFTNormalisation.RuleTemplate(
+                         transformer_factory=SkLearnTransformerFactoryFactory.StandardScaler(),
+                         independent_columns=False))
 
 registry = FeatureGeneratorRegistry()
 
@@ -70,7 +83,7 @@ registry.register_factory(
     FeatureName.WETNESS,
     lambda: FeatureGeneratorTakeColumns(
         COL_WETNESS,
-        normalisation_rule_template=DFTNormalisation.RuleTemplate(skip=True),
+        normalisation_rule_template=DFTNormalisation.RuleTemplate(skip=False),
     ),
 )
 
@@ -89,6 +102,11 @@ registry.register_factory(
 
 registry.register_factory(
     FeatureName.TREE_SPECIES,
-    lambda: FeatureGeneratorTakeColumns()
+    lambda: FeatureGeneratorTakeColumns(COL_TREE_SPECIES, categorical_feature_names=COL_TREE_SPECIES)
 )
 
+registry.register_factory(FeatureName.WAVELENGTH_LEVELS,
+                          lambda: ChainedFeatureGenerator([
+                              FeatureGeneratorTakeColumns(COL_WAVELENGTH_LEVELS),
+                              FGImputer(strategy="medium"),
+                          ]))
