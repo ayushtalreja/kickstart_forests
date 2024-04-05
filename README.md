@@ -29,8 +29,3 @@ Baseline model to predict `lai`.
 - Using a subset of the features available
 - Simple regression models
 - No hyperparameter optimization
-
-### The MLOps Credentials
-
-- MLFlow: https://team1-mlflow-0d6bb1b-k4avrf3gmq-ey.a.run.app (`admin` / `HDtZMsBD9pkSnUN1`)
-- lakeFS: https://team1-lakefs-ec9ba54-k4avrf3gmq-ey.a.run.app (`admin`, Access key ID: `AKIAJIQCZOM6BIL4KL6Q`, secret access key: `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`)
